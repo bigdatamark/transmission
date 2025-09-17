@@ -186,9 +186,9 @@ struct tau_announce_request
         buf.add_uint32(transaction_id);
         buf.add(in.info_hash);
         buf.add(in.peer_id);
-        buf.add_uint64(in.down);
-        buf.add_uint64(in.leftUntilComplete);
-        buf.add_uint64(in.up);
+        buf.add_uint64(0);
+        buf.add_uint64(0);
+        buf.add_uint64(0);
         buf.add_uint32(get_tau_announce_event(in.event));
         if (announce_ip && announce_ip->is_ipv4())
         {
@@ -199,7 +199,7 @@ struct tau_announce_request
             buf.add_uint32(0U);
         }
         buf.add_uint32(in.key);
-        buf.add_uint32(in.numwant);
+        buf.add_uint32(0);
         buf.add_port(in.port);
         payload.insert(std::end(payload), std::begin(buf), std::end(buf));
     }

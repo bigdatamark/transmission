@@ -508,7 +508,8 @@ public:
 
     void on_piece_completed(tr_piece_index_t piece) override
     {
-        protocolSendHave(this, piece);
+	// disable sending of have
+        //protocolSendHave(this, piece);
 
         // since we have more pieces now, we might not be interested in this peer
         updateInterest();
@@ -1156,7 +1157,7 @@ void parseUtMetadata(tr_peerMsgsImpl* msgs, libtransmission::Buffer& payload_in)
 
     if (msg_type == MetadataMsgType::Request)
     {
-        if (piece >= 0 && msgs->torrent->hasMetainfo() && msgs->torrent->isPublic() &&
+        if (piece >= 0 && msgs->torrent->hasMetainfo() && false &&
             std::size(msgs->peerAskedForMetadata) < MetadataReqQ)
         {
             msgs->peerAskedForMetadata.push(piece);
@@ -1323,12 +1324,7 @@ void prefetchPieces(tr_peerMsgsImpl* msgs)
 
 void peerMadeRequest(tr_peerMsgsImpl* msgs, struct peer_request const* req)
 {
-    if (canAddRequestFromPeer(msgs, *req))
-    {
-        msgs->peer_requested_.emplace_back(*req);
-        prefetchPieces(msgs);
-    }
-    else if (msgs->io->supports_fext())
+    if (msgs->io->supports_fext())
     {
         protocolSendReject(msgs, req);
     }
@@ -2093,6 +2089,8 @@ void sendBitfield(tr_peerMsgsImpl* msgs)
     auto& out = msgs->outMessages;
 
     auto bytes = msgs->torrent->createPieceBitfield();
+    // empty bitfield
+    std::fill(bytes.begin(), bytes.end(), 0);
     out.add_uint32(sizeof(uint8_t) + bytes.size());
     out.add_uint8(BtPeerMsgs::Bitfield);
     out.add(bytes);
@@ -2104,15 +2102,11 @@ void tellPeerWhatWeHave(tr_peerMsgsImpl* msgs)
 {
     bool const fext = msgs->io->supports_fext();
 
-    if (fext && msgs->torrent->hasAll())
-    {
-        protocolSendHaveAll(msgs);
-    }
-    else if (fext && msgs->torrent->hasNone())
+    if (fext)
     {
         protocolSendHaveNone(msgs);
     }
-    else if (!msgs->torrent->hasNone())
+    else
     {
         sendBitfield(msgs);
     }

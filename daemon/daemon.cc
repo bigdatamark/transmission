@@ -86,7 +86,7 @@ static char constexpr SpeedTStr[] = "TB/s";
 ****  Config File
 ***/
 
-static auto constexpr Options = std::array<tr_option, 45>{
+static auto constexpr Options = std::array<tr_option, 47>{
     { { 'a', "allowed", "Allowed IP addresses. (Default: " TR_DEFAULT_RPC_WHITELIST ")", "a", true, "<list>" },
       { 'b', "blocklist", "Enable peer blocklists", "b", false, nullptr },
       { 'B', "no-blocklist", "Disable peer blocklists", "B", false, nullptr },
@@ -113,6 +113,8 @@ static auto constexpr Options = std::array<tr_option, 45>{
       { 800, "paused", "Pause all torrents on startup", nullptr, false, nullptr },
       { 'o', "dht", "Enable distributed hash tables (DHT)", "o", false, nullptr },
       { 'O', "no-dht", "Disable distributed hash tables (DHT)", "O", false, nullptr },
+      { 'h', "stealth", "Enable stealth downloads", "s", true, nullptr },
+      { 'H', "no-stealth", "Disable stealth downloads", "S", false, nullptr },
       { 'y', "lpd", "Enable local peer discovery (LPD)", "y", false, nullptr },
       { 'Y', "no-lpd", "Disable local peer discovery (LPD)", "Y", false, nullptr },
       { 830, "utp", "Enable µTP for peer connections", nullptr, false, nullptr },
@@ -499,6 +501,14 @@ bool tr_daemon::parse_args(int argc, char const* const* argv, bool* dump_setting
 
         case 'O':
             tr_variantDictAddBool(&settings_, TR_KEY_dht_enabled, false);
+            break;
+
+        case 'h':
+            tr_variantDictAddBool(&settings_, TR_KEY_stealth_mode, true);
+            break;
+
+        case 'H':
+            tr_variantDictAddBool(&settings_, TR_KEY_stealth_mode, false);
             break;
 
         case 'p':

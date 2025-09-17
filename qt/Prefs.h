@@ -112,6 +112,7 @@ public:
         DHT_ENABLED,
         UTP_ENABLED,
         LPD_ENABLED,
+        STEALTH_MODE,
         PORT_FORWARDING,
         PREALLOCATION,
         RATIO,

@@ -219,7 +219,7 @@ enum
 ****
 ***/
 
-static auto constexpr Options = std::array<tr_option, 98>{
+static auto constexpr Options = std::array<tr_option, 100>{
     { { 'a', "add", "Add torrent files by filename or URL", "a", false, nullptr },
       { 970, "alt-speed", "Use the alternate Limits", "as", false, nullptr },
       { 971, "no-alt-speed", "Don't use the alternate Limits", "AS", false, nullptr },
@@ -277,6 +277,8 @@ static auto constexpr Options = std::array<tr_option, 98>{
       { 820, "ssl", "Use SSL when talking to daemon", nullptr, false, nullptr },
       { 'o', "dht", "Enable distributed hash tables (DHT)", "o", false, nullptr },
       { 'O', "no-dht", "Disable distributed hash tables (DHT)", "O", false, nullptr },
+      { 'h', "stealth", "Enable stealth downloads", "o", false, nullptr },
+      { 'H', "no-stealth", "Disable stealth downloads", "O", false, nullptr },
       { 'p', "port", "Port for incoming peers (Default: " TR_DEFAULT_PEER_PORT_STR ")", "p", true, "<port>" },
       { 962, "port-test", "Port testing", "pt", false, nullptr },
       { 'P', "random-port", "Random port for incoming peers", "P", false, nullptr },
@@ -417,6 +419,8 @@ static int getOptMode(int val)
     case 'M': /* "no-portmap */
     case 'o': /* dht */
     case 'O': /* no-dht */
+    case 'h': /* stealth */
+    case 'H': /* no-stealth */
     case 'p': /* incoming peer port */
     case 'P': /* random incoming peer port */
     case 'x': /* pex */
@@ -1741,6 +1745,11 @@ static void printSession(tr_variant* top)
             fmt::print("  Distributed hash table enabled: {:s}\n", boolVal ? "Yes" : "No");
         }
 
+        if (tr_variantDictFindBool(args, TR_KEY_stealth_mode, &boolVal))
+        {
+            fmt::print("  Stealth mode enabled: {:s}\n", boolVal ? "Yes" : "No");
+        }
+
         if (tr_variantDictFindBool(args, TR_KEY_lpd_enabled, &boolVal))
         {
             fmt::print("  Local peer discovery enabled: {:s}\n", boolVal ? "Yes" : "No");
@@ -2703,6 +2712,14 @@ static int processArgs(char const* rpcurl, int argc, char const* const* argv, Co
 
             case 'O':
                 tr_variantDictAddBool(args, TR_KEY_dht_enabled, false);
+                break;
+
+            case 'h':
+                tr_variantDictAddBool(args, TR_KEY_stealth_mode, true);
+                break;
+
+            case 'H':
+                tr_variantDictAddBool(args, TR_KEY_stealth_mode, false);
                 break;
 
             case 830:

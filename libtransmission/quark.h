@@ -363,6 +363,7 @@ enum
     TR_KEY_startDate,
     TR_KEY_status,
     TR_KEY_statusbar_stats,
+    TR_KEY_stealth_mode,
     TR_KEY_tag,
     TR_KEY_tcp_enabled,
     TR_KEY_tier,

@@ -609,6 +609,16 @@ export class PrefsDialog extends EventTarget {
     root.append(cal.root);
     const blocklist_enabled_check = cal.check;
 
+    cal = PrefsDialog._createCheckAndLabel(
+      'stealth-mode-div',
+      'Download in stealth mode'
+    );
+    cal.check.title = 'Stealth mode prevents download advertisments and does not uload.';
+    cal.check.dataset.key = 'stealth-mode';
+    cal.label.title = cal.check.title;
+    root.append(cal.root);
+    const stealth_check = cal.check;
+
     input = document.createElement('input');
     input.type = 'url';
     input.value = 'http://www.example.com/blocklist';

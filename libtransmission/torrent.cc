@@ -519,8 +519,13 @@ void tr_torrentCheckSeedLimit(tr_torrent* tor)
         return;
     }
 
+    /* if we're in stealth mode, stop the torrent */
+    if (TR_KEY_stealth_mode) {
+        tr_logAddInfoTor(tor, "Stealth mode is on; pausing torrent");
+        tor->isStopping = true;
+    }
     /* if we're seeding and reach our seed ratio limit, stop the torrent */
-    if (tr_torrentIsSeedRatioDone(tor))
+    else if (tr_torrentIsSeedRatioDone(tor))
     {
         tr_logAddInfoTor(tor, _("Seed ratio reached; pausing torrent"));
         tor->isStopping = true;
@@ -1583,7 +1588,7 @@ tr_stat const* tr_torrentStat(tr_torrent* tor)
 
     /* s->haveValid is here to make sure a torrent isn't marked 'finished'
      * when the user hits "uncheck all" prior to starting the torrent... */
-    s->finished = tor->finishedSeedingByIdle || (seed_ratio_applies && seed_ratio_bytes_left == 0 && s->haveValid != 0);
+    s->finished = (TR_KEY_stealth_mode || tor->finishedSeedingByIdle || (seed_ratio_applies && seed_ratio_bytes_left == 0)) && s->haveValid != 0;
 
     if (!seed_ratio_applies || s->finished)
     {
@@ -1912,7 +1917,8 @@ void tr_torrent::recheckCompleteness()
         {
             if (recent_change)
             {
-                tr_announcerTorrentCompleted(this);
+                // don't send complete to tracker
+                //tr_announcerTorrentCompleted(this);
                 this->markChanged();
                 this->doneDate = tr_time();
             }
@@ -2562,7 +2568,7 @@ void renameTorrentFileString(tr_torrent* tor, std::string_view oldpath, std::str
         }
         else
         {
-            name = fmt::format(FMT_STRING("{:s}/{:s}"sv), newname, subpath.substr(oldpath_len + 1));
+            name = fmt::format("{:s}/{:s}", newname, subpath.substr(oldpath_len + 1));
         }
     }
     else
@@ -2576,11 +2582,11 @@ void renameTorrentFileString(tr_torrent* tor, std::string_view oldpath, std::str
 
         if (oldpath_len >= std::size(subpath))
         {
-            name = fmt::format(FMT_STRING("{:s}/{:s}"sv), tmp, newname);
+            name = fmt::format("{:s}/{:s}", tmp, newname);
         }
         else
         {
-            name = fmt::format(FMT_STRING("{:s}/{:s}/{:s}"sv), tmp, newname, subpath.substr(oldpath_len + 1));
+            name = fmt::format("{:s}/{:s}/{:s}", tmp, newname, subpath.substr(oldpath_len + 1));
         }
     }
 
