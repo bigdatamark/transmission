@@ -520,7 +520,8 @@ void tr_torrentCheckSeedLimit(tr_torrent* tor)
     }
 
     /* if we're in stealth mode, stop the torrent */
-    if (TR_KEY_stealth_mode) {
+    if (tr_sessionIsStealthEnabled(tor->session))
+    {
         tr_logAddInfoTor(tor, "Stealth mode is on; pausing torrent");
         tor->isStopping = true;
     }
@@ -1588,7 +1589,7 @@ tr_stat const* tr_torrentStat(tr_torrent* tor)
 
     /* s->haveValid is here to make sure a torrent isn't marked 'finished'
      * when the user hits "uncheck all" prior to starting the torrent... */
-    s->finished = (TR_KEY_stealth_mode || tor->finishedSeedingByIdle || (seed_ratio_applies && seed_ratio_bytes_left == 0)) && s->haveValid != 0;
+    s->finished = (tr_sessionIsStealthEnabled(tor->session) || tor->finishedSeedingByIdle || (seed_ratio_applies && seed_ratio_bytes_left == 0)) && s->haveValid != 0;
 
     if (!seed_ratio_applies || s->finished)
     {
@@ -1917,8 +1918,12 @@ void tr_torrent::recheckCompleteness()
         {
             if (recent_change)
             {
-                // don't send complete to tracker
-                //tr_announcerTorrentCompleted(this);
+                // don't send complete to tracker if stealth mode is enabled
+                if (!tr_sessionIsStealthEnabled(this->session))
+                {
+                    tr_announcerTorrentCompleted(this);
+                }
+                //
                 this->markChanged();
                 this->doneDate = tr_time();
             }

@@ -80,7 +80,7 @@ static void tr_prefs_init_defaults(tr_variant* d)
     tr_variantDictAddStr(d, TR_KEY_sort_mode, "sort-by-name"sv);
     tr_variantDictAddBool(d, TR_KEY_sort_reversed, false);
     tr_variantDictAddBool(d, TR_KEY_compact_view, false);
-    tr_variantDictAddBool(d, TR_KEY_stealth_mode, true);
+    tr_variantDictAddBool(d, TR_KEY_stealth_enabled, true);
 }
 
 static void ensure_sound_cmd_is_a_list(tr_variant* dict)

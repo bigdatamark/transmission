@@ -811,13 +811,14 @@ void tier_announce_event_push(tr_tier* tier, tr_announce_event e, time_t announc
          * dump everything leading up to it except "completed" */
         if (e == TR_ANNOUNCE_EVENT_STOPPED)
         {
+            bool const isStealth = tr_sessionIsStealthEnabled(tier->tor->session);
             bool const has_completed = std::count(std::begin(events), std::end(events), TR_ANNOUNCE_EVENT_COMPLETED) != 0;
             events.clear();
-	    // don't readd "completed"
-            //if (has_completed)
-            //{
-            //    events.push_back(TR_ANNOUNCE_EVENT_COMPLETED);
-            //}
+            // don't readd "completed" if stealth_enabled
+            if (has_completed && !isStealth)
+            {
+                events.push_back(TR_ANNOUNCE_EVENT_COMPLETED);
+            }
         }
 
         /* special case #2: dump all empty strings leading up to this event */

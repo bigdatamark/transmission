@@ -142,7 +142,7 @@ std::array<Prefs::PrefItem, Prefs::PREFS_COUNT> const Prefs::Items{
     { DHT_ENABLED, TR_KEY_dht_enabled, QMetaType::Bool },
     { UTP_ENABLED, TR_KEY_utp_enabled, QMetaType::Bool },
     { LPD_ENABLED, TR_KEY_lpd_enabled, QMetaType::Bool },
-    { STEALTH_MODE, TR_KEY_stealth_mode, QMetaType::Bool },
+    { STEALTH_ENABLED, TR_KEY_stealth_enabled, QMetaType::Bool },
     { PORT_FORWARDING, TR_KEY_port_forwarding_enabled, QMetaType::Bool },
     { PREALLOCATION, TR_KEY_preallocation, QMetaType::Int },
     { RATIO, TR_KEY_ratio_limit, QMetaType::Double },

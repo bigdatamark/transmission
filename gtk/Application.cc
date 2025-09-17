@@ -1257,6 +1257,10 @@ void Application::Impl::on_prefs_changed(tr_quark const key)
         tr_sessionSetLPDEnabled(tr, gtr_pref_flag_get(key));
         break;
 
+    case TR_KEY_stealth_enabled:
+        tr_sessionSetStealthEnabled(tr, gtr_pref_flag_get(key));
+        break;
+
     case TR_KEY_rpc_port:
         tr_sessionSetRPCPort(tr, gtr_pref_int_get(key));
         break;

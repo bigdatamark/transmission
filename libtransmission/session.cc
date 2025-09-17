@@ -298,7 +298,14 @@ std::optional<std::string> tr_session::WebMediator::cookieFile() const
 
 std::optional<std::string_view> tr_session::WebMediator::userAgent() const
 {
-    return TR_NAME "/" SHORT_VERSION_STRING;
+    if (tr_sessionIsStealthEnabled)
+    {
+        return TR_NAME "/" SHORT_VERSION_STRING "(stealth mode)";
+    }
+    else
+    {
+        return TR_NAME "/" SHORT_VERSION_STRING;
+    }
 }
 
 std::optional<std::string> tr_session::WebMediator::publicAddressV4() const
@@ -757,6 +764,8 @@ void tr_session::setSettings(tr_session_settings&& settings_in, bool force)
     }
 
     bool const dht_changed = new_settings.dht_enabled != old_settings.dht_enabled;
+
+    bool const stealth_changed = new_settings.stealth_enabled != old_settings.stealth_enabled;
 
     if (!udp_core_ || force || port_changed || dht_changed)
     {
@@ -1441,6 +1450,19 @@ size_t tr_sessionGetAllTorrents(tr_session* session, tr_torrent** buf, size_t bu
 }
 
 // ---
+bool tr_sessionIsStealthEnabled(tr_session const* session)
+{
+    TR_ASSERT(session != nullptr);
+
+    return session->allowsStealth();
+}
+
+void tr_sessionSetStealthEnabled(tr_session* session, bool enabled)
+{
+    TR_ASSERT(session != nullptr);
+
+    session->settings_.stealth_enabled = enabled;
+}
 
 void tr_sessionSetPexEnabled(tr_session* session, bool enabled)
 {

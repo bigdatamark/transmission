@@ -1942,6 +1942,11 @@ char const* sessionSet(tr_session* session, tr_variant* args_in, tr_variant* /*a
         tr_sessionSetLPDEnabled(session, val);
     }
 
+    if (auto val = bool{}; tr_variantDictFindBool(args_in, TR_KEY_stealth_enabled, &val))
+    {
+        tr_sessionSetStealthEnabled(session, val);
+    }
+
     if (auto val = bool{}; tr_variantDictFindBool(args_in, TR_KEY_peer_port_random_on_start, &val))
     {
         tr_sessionSetPeerPortRandomOnStart(session, val);

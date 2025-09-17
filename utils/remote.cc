@@ -1745,7 +1745,7 @@ static void printSession(tr_variant* top)
             fmt::print("  Distributed hash table enabled: {:s}\n", boolVal ? "Yes" : "No");
         }
 
-        if (tr_variantDictFindBool(args, TR_KEY_stealth_mode, &boolVal))
+        if (tr_variantDictFindBool(args, TR_KEY_stealth_enabled, &boolVal))
         {
             fmt::print("  Stealth mode enabled: {:s}\n", boolVal ? "Yes" : "No");
         }
@@ -2715,11 +2715,11 @@ static int processArgs(char const* rpcurl, int argc, char const* const* argv, Co
                 break;
 
             case 'h':
-                tr_variantDictAddBool(args, TR_KEY_stealth_mode, true);
+                tr_variantDictAddBool(args, TR_KEY_stealth_enabled, true);
                 break;
 
             case 'H':
-                tr_variantDictAddBool(args, TR_KEY_stealth_mode, false);
+                tr_variantDictAddBool(args, TR_KEY_stealth_enabled, false);
                 break;
 
             case 830:

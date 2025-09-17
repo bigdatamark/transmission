@@ -9,7 +9,7 @@
 #error only libtransmission should #include this header.
 #endif
 
-#define TR_NAME "Transmission/Stealth"
+#define TR_NAME "Transmission"
 
 #include <array>
 #include <cstddef> // size_t
@@ -732,6 +732,11 @@ public:
         return settings_.lpd_enabled;
     }
 
+    [[nodiscard]] constexpr bool allowsStealth() const noexcept
+    {
+        return settings_.stealth_enabled;
+    }
+
     [[nodiscard]] constexpr auto allowsPEX() const noexcept
     {
         return settings_.pex_enabled;
@@ -956,6 +961,7 @@ private:
     friend void tr_sessionSetAntiBruteForceThreshold(tr_session* session, int max_bad_requests);
     friend void tr_sessionSetCacheLimit_MB(tr_session* session, size_t mb);
     friend void tr_sessionSetDHTEnabled(tr_session* session, bool enabled);
+    friend void tr_sessionSetStealthEnabled(tr_session* session, bool enabled);
     friend void tr_sessionSetDeleteSource(tr_session* session, bool delete_source);
     friend void tr_sessionSetEncryption(tr_session* session, tr_encryption_mode mode);
     friend void tr_sessionSetIdleLimit(tr_session* session, uint16_t idle_minutes);
@@ -1131,7 +1137,7 @@ private:
 
 public:
     // depends-on: announcer_udp_mediator_
-    std::unique_ptr<tr_announcer_udp> announcer_udp_ = tr_announcer_udp::create(announcer_udp_mediator_);
+    std::unique_ptr<tr_announcer_udp> announcer_udp_ = tr_announcer_udp::create(this, announcer_udp_mediator_);
 
     // depends-on: settings_, torrents_, web_, announcer_udp_
     std::unique_ptr<tr_announcer> announcer_ = tr_announcer::create(this, *announcer_udp_, n_pending_stops_);

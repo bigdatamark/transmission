@@ -25,6 +25,7 @@
 
 #define LIBTRANSMISSION_ANNOUNCER_MODULE
 
+#include "session.h"
 #include "transmission.h"
 
 #include "announcer.h"
@@ -167,10 +168,12 @@ private:
 struct tau_announce_request
 {
     tau_announce_request(
+        tr_session const* session,
         std::optional<tr_address> announce_ip,
         tr_announce_request const& in,
         tr_announce_response_func on_response)
-        : on_response_{ std::move(on_response) }
+        : session_{ session }
+        , on_response_{ std::move(on_response) }
     {
         // https://www.bittorrent.org/beps/bep_0015.html sets key size at 32 bits
         static_assert(sizeof(tr_announce_request::key) * CHAR_BIT == 32);
@@ -186,9 +189,9 @@ struct tau_announce_request
         buf.add_uint32(transaction_id);
         buf.add(in.info_hash);
         buf.add(in.peer_id);
-        buf.add_uint64(0);
-        buf.add_uint64(0);
-        buf.add_uint64(0);
+        buf.add_uint64(tr_sessionIsStealthEnabled(session_) ? 0 : in.down);
+        buf.add_uint64(tr_sessionIsStealthEnabled(session_) ? 0 : in.leftUntilComplete);
+        buf.add_uint64(tr_sessionIsStealthEnabled(session_) ? 0 : in.up);
         buf.add_uint32(get_tau_announce_event(in.event));
         if (announce_ip && announce_ip->is_ipv4())
         {
@@ -199,10 +202,11 @@ struct tau_announce_request
             buf.add_uint32(0U);
         }
         buf.add_uint32(in.key);
-        buf.add_uint32(0);
+        buf.add_uint32(tr_sessionIsStealthEnabled(session_) ? 0 : in.numwant);
         buf.add_port(in.port);
         payload.insert(std::end(payload), std::begin(buf), std::end(buf));
     }
+    tr_session const* session_ = nullptr;
 
     [[nodiscard]] auto has_callback() const noexcept
     {
@@ -581,11 +585,13 @@ private:
 
 // --- SESSION
 
+
 class tr_announcer_udp_impl final : public tr_announcer_udp
 {
 public:
-    explicit tr_announcer_udp_impl(Mediator& mediator)
-        : mediator_{ mediator }
+    tr_announcer_udp_impl(tr_session* session, Mediator& mediator)
+        : session_{ session }
+        , mediator_{ mediator }
     {
     }
 
@@ -596,9 +602,7 @@ public:
         {
             return;
         }
-
-        // Since size of IP field is only 4 bytes long, we can only announce IPv4 addresses
-        tracker->announces.emplace_back(mediator_.announceIP(), request, std::move(on_response));
+        tracker->announces.emplace_back(session_, mediator_.announceIP(), request, std::move(on_response));
         tracker->upkeep(false);
     }
 
@@ -750,12 +754,13 @@ private:
 
     std::list<tau_tracker> trackers_;
 
+    tr_session* session_;
     Mediator& mediator_;
 };
 
 } // namespace
 
-std::unique_ptr<tr_announcer_udp> tr_announcer_udp::create(Mediator& mediator)
+std::unique_ptr<tr_announcer_udp> tr_announcer_udp::create(tr_session* session, Mediator& mediator)
 {
-    return std::make_unique<tr_announcer_udp_impl>(mediator);
+    return std::make_unique<tr_announcer_udp_impl>(session, mediator);
 }

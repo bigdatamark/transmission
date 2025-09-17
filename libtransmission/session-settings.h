@@ -67,6 +67,7 @@ struct tr_variant;
     V(TR_KEY_speed_limit_up, speed_limit_up, size_t, 100U, "") \
     V(TR_KEY_speed_limit_up_enabled, speed_limit_up_enabled, bool, false, "") \
     V(TR_KEY_start_added_torrents, should_start_added_torrents, bool, true, "") \
+    V(TR_KEY_stealth_enabled, stealth_enabled, bool, false, "") \
     V(TR_KEY_tcp_enabled, tcp_enabled, bool, true, "") \
     V(TR_KEY_trash_original_torrent_files, should_delete_source_torrents, bool, false, "") \
     V(TR_KEY_umask, umask, tr_mode_t, 022, "") \

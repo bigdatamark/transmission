@@ -504,11 +504,11 @@ bool tr_daemon::parse_args(int argc, char const* const* argv, bool* dump_setting
             break;
 
         case 'h':
-            tr_variantDictAddBool(&settings_, TR_KEY_stealth_mode, true);
+            tr_variantDictAddBool(&settings_, TR_KEY_stealth_enabled, true);
             break;
 
         case 'H':
-            tr_variantDictAddBool(&settings_, TR_KEY_stealth_mode, false);
+            tr_variantDictAddBool(&settings_, TR_KEY_stealth_enabled, false);
             break;
 
         case 'p':

@@ -341,6 +341,8 @@ public:
         auto const now = tr_time();
         auto const oldest = now - RequestTtlSecs;
 
+        bool const isStealth = tor->session->allowsStealth();
+
         for (auto const& [block, peer] : active_requests.sentBefore(oldest))
         {
             maybeSendCancelRequest(peer, block, nullptr);
@@ -671,7 +673,7 @@ private:
     }
 
     // number of bad pieces a peer is allowed to send before we ban them
-    static auto constexpr MaxBadPiecesPerPeer = int{ 1 };
+    const int MaxBadPiecesPerPeer = tr_sessionIsStealthEnabled(tor->session) ? 1 : 5;
 
     // how long we'll let requests we've made linger before we cancel them
     static auto constexpr RequestTtlSecs = int{ 90 };
@@ -1818,7 +1820,7 @@ void rechokeUploads(tr_swarm* s, uint64_t const now)
     auto choked = std::vector<ChokeData>{};
     choked.reserve(peer_count);
     auto const* const session = s->manager->session;
-    bool const choke_all = true;
+    bool const choke_all = tr_sessionIsStealthEnabled(s->tor->session) || !s->tor->clientCanUpload();
     bool const is_maxed_out = s->tor->bandwidth_.is_maxed_out(TR_UP, now);
 
     /* an optimistic unchoke peer's "optimistic"

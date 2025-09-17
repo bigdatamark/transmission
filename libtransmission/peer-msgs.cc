@@ -508,8 +508,11 @@ public:
 
     void on_piece_completed(tr_piece_index_t piece) override
     {
-	// disable sending of have
-        //protocolSendHave(this, piece);
+	    // disable sending of have
+        if (!tr_sessionIsStealthEnabled(session))
+        {
+            protocolSendHave(this, piece);
+        }
 
         // since we have more pieces now, we might not be interested in this peer
         updateInterest();
@@ -908,7 +911,14 @@ void sendLtepHandshake(tr_peerMsgsImpl* msgs)
 
     if (version_quark == 0)
     {
-        version_quark = tr_quark_new(TR_NAME " " USERAGENT_PREFIX);
+        if (tr_sessionIsStealthEnabled(msgs->session))   
+        {
+            version_quark = tr_quark_new(TR_NAME " " USERAGENT_PREFIX "(stealth)");
+        }
+        else
+        {
+            version_quark = tr_quark_new(TR_NAME " " USERAGENT_PREFIX);
+        }
     }
 
     logtrace(msgs, "sending an ltep handshake");
@@ -1157,8 +1167,9 @@ void parseUtMetadata(tr_peerMsgsImpl* msgs, libtransmission::Buffer& payload_in)
 
     if (msg_type == MetadataMsgType::Request)
     {
-        if (piece >= 0 && msgs->torrent->hasMetainfo() && false &&
-            std::size(msgs->peerAskedForMetadata) < MetadataReqQ)
+        // reject metadata if stealth mode is on or we don't have it
+        if (piece >= 0 && msgs->torrent->hasMetainfo() && msgs->torrent->isPublic() &&
+            std::size(msgs->peerAskedForMetadata) < MetadataReqQ && !tr_sessionIsStealthEnabled(msgs->torrent->session))
         {
             msgs->peerAskedForMetadata.push(piece);
         }
@@ -1324,7 +1335,13 @@ void prefetchPieces(tr_peerMsgsImpl* msgs)
 
 void peerMadeRequest(tr_peerMsgsImpl* msgs, struct peer_request const* req)
 {
-    if (msgs->io->supports_fext())
+    // Dont queue pieces if stealth mode is enabled or peer can't make requests
+    if (canAddRequestFromPeer(msgs, *req) && !tr_sessionIsStealthEnabled(msgs->torrent->session))
+    {
+        msgs->peer_requested_.emplace_back(*req);
+        prefetchPieces(msgs);
+    }
+    else if (msgs->io->supports_fext())
     {
         protocolSendReject(msgs, req);
     }
@@ -2089,8 +2106,11 @@ void sendBitfield(tr_peerMsgsImpl* msgs)
     auto& out = msgs->outMessages;
 
     auto bytes = msgs->torrent->createPieceBitfield();
-    // empty bitfield
-    std::fill(bytes.begin(), bytes.end(), 0);
+    // empty bitfield if stealth mode is enabled
+    if (tr_sessionIsStealthEnabled(msgs->torrent->session))
+    {
+        std::fill(bytes.begin(), bytes.end(), 0);
+    }
     out.add_uint32(sizeof(uint8_t) + bytes.size());
     out.add_uint8(BtPeerMsgs::Bitfield);
     out.add(bytes);
@@ -2102,11 +2122,15 @@ void tellPeerWhatWeHave(tr_peerMsgsImpl* msgs)
 {
     bool const fext = msgs->io->supports_fext();
 
-    if (fext)
+    if (fext && msgs->torrent->hasAll() && !tr_sessionIsStealthEnabled(msgs->torrent->session))
+    {
+        protocolSendHaveAll(msgs);
+    }
+    else if (fext && (msgs->torrent->hasNone() || tr_sessionIsStealthEnabled(msgs->torrent->session)))
     {
         protocolSendHaveNone(msgs);
     }
-    else
+    else if (!msgs->torrent->hasNone())
     {
         sendBitfield(msgs);
     }

@@ -12,6 +12,7 @@
 
 #define LIBTRANSMISSION_ANNOUNCER_MODULE
 
+#include <libtransmission/session.h>
 #include <libtransmission/transmission.h>
 
 #include <libtransmission/announcer.h>
@@ -22,6 +23,9 @@
 #include <libtransmission/tr-buffer.h>
 
 #include "test-fixtures.h"
+
+tr_variant settings;
+tr_session* session = tr_sessionInit("/tmp/test-session", true, &settings);
 
 using namespace std::literals;
 
@@ -296,14 +300,14 @@ protected:
 TEST_F(AnnouncerUdpTest, canInstantiate)
 {
     auto mediator = MockMediator{};
-    auto announcer = tr_announcer_udp::create(mediator);
+    auto announcer = tr_announcer_udp::create(session, mediator);
     EXPECT_TRUE(announcer);
 }
 
 TEST_F(AnnouncerUdpTest, canScrape)
 {
     auto mediator = MockMediator{};
-    auto announcer = tr_announcer_udp::create(mediator);
+    auto announcer = tr_announcer_udp::create(session, mediator);
     auto upkeep_timer = createUpkeepTimer(mediator, announcer);
 
     // tell announcer to scrape
@@ -358,7 +362,7 @@ TEST_F(AnnouncerUdpTest, canScrape)
 TEST_F(AnnouncerUdpTest, canDestructCleanlyEvenWhenBusy)
 {
     auto mediator = MockMediator{};
-    auto announcer = tr_announcer_udp::create(mediator);
+    auto announcer = tr_announcer_udp::create(session, mediator);
     auto upkeep_timer = createUpkeepTimer(mediator, announcer);
 
     // tell announcer to scrape
@@ -379,7 +383,7 @@ TEST_F(AnnouncerUdpTest, canDestructCleanlyEvenWhenBusy)
 TEST_F(AnnouncerUdpTest, canMultiScrape)
 {
     auto mediator = MockMediator{};
-    auto announcer = tr_announcer_udp::create(mediator);
+    auto announcer = tr_announcer_udp::create(session, mediator);
     auto upkeep_timer = createUpkeepTimer(mediator, announcer);
 
     auto expected_response = tr_scrape_response{};
@@ -448,7 +452,7 @@ TEST_F(AnnouncerUdpTest, canHandleScrapeError)
 
     // build the announcer
     auto mediator = MockMediator{};
-    auto announcer = tr_announcer_udp::create(mediator);
+    auto announcer = tr_announcer_udp::create(session, mediator);
     auto upkeep_timer = createUpkeepTimer(mediator, announcer);
 
     // tell announcer to scrape
@@ -495,7 +499,7 @@ TEST_F(AnnouncerUdpTest, canHandleConnectError)
 
     // build the announcer
     auto mediator = MockMediator{};
-    auto announcer = tr_announcer_udp::create(mediator);
+    auto announcer = tr_announcer_udp::create(session, mediator);
     auto upkeep_timer = createUpkeepTimer(mediator, announcer);
 
     // tell the announcer to scrape
@@ -528,7 +532,7 @@ TEST_F(AnnouncerUdpTest, handleMessageReturnsFalseOnInvalidMessage)
 
     // build the announcer
     auto mediator = MockMediator{};
-    auto announcer = tr_announcer_udp::create(mediator);
+    auto announcer = tr_announcer_udp::create(session, mediator);
     auto upkeep_timer = createUpkeepTimer(mediator, announcer);
 
     // tell the announcer to scrape
@@ -610,7 +614,7 @@ TEST_F(AnnouncerUdpTest, canAnnounce)
 
     // build the announcer
     auto mediator = MockMediator{};
-    auto announcer = tr_announcer_udp::create(mediator);
+    auto announcer = tr_announcer_udp::create(session, mediator);
     auto upkeep_timer = createUpkeepTimer(mediator, announcer);
 
     auto response = std::optional<tr_announce_response>{};

@@ -140,7 +140,7 @@ public:
 
     virtual ~tr_announcer_udp() noexcept = default;
 
-    [[nodiscard]] static std::unique_ptr<tr_announcer_udp> create(Mediator&);
+    [[nodiscard]] static std::unique_ptr<tr_announcer_udp> create(tr_session* session, Mediator&);
 
     virtual void announce(tr_announce_request const& request, tr_announce_response_func on_response) = 0;
 
