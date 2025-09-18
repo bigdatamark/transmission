@@ -30,7 +30,7 @@ jobs:
         id: cache-key
         run: |
           try {
-              $DepsHash = & (Join-Path . src release windows main.ps1) -Mode DepsHash -BuildArch ${{ matrix.arch }}
+              $DepsHash = & "src\release\windows\main.ps1" -Mode DepsHash -BuildArch ${{ matrix.arch }}
               "hash=${DepsHash}" | Out-File $Env:GITHUB_OUTPUT -Append
           } catch {
               Write-Error ("{1}{0}{2}{0}{3}" -f [Environment]::NewLine, $_.ToString(), $_.InvocationInfo.PositionMessage, $_.ScriptStackTrace) -ErrorAction Continue
