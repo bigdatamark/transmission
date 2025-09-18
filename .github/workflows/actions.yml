@@ -16,7 +16,6 @@ jobs:
           echo '${{ toJSON(runner) }}'
       - name: Get Build Tools
         run: |
-          Install-Module -Name PowerShellGet -Force -AllowClobber
           $DepsPrefix = (Join-Path (Get-Item .).Root.Name "${{ matrix.arch }}-prefix")
           "DEPS_PREFIX=${DepsPrefix}" | Out-File $Env:GITHUB_ENV -Append
           (Join-Path $DepsPrefix 'bin') | Out-File $Env:GITHUB_PATH -Append
