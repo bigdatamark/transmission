@@ -3,7 +3,11 @@ on:
   workflow_dispatch:
     branches:
       - 'stealth-4.0.6'
-        
+
+env:
+  GTEST_OUTPUT: xml:./
+jobs:
+
   windows:
     needs: [ what-to-make ]
     runs-on: [self-hosted, windows-2022]
