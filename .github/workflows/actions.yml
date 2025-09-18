@@ -20,7 +20,7 @@ jobs:
           "DEPS_PREFIX=${DepsPrefix}" | Out-File $Env:GITHUB_ENV -Append
           (Join-Path $DepsPrefix 'bin') | Out-File $Env:GITHUB_PATH -Append
           (Join-Path (Join-Path $Env:ProgramFiles 'WiX Toolset v6.0') 'bin') | Out-File $Env:GITHUB_PATH -Append
-
+          Install-Module -Name PowerShellGet -Force -AllowClobber
           Install-Module -Name Pscx -Version 4.0.0-beta4 -AllowPrerelease -Force
       - name: Get Source
         uses: actions/checkout@v3
