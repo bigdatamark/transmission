@@ -15,6 +15,7 @@ if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
         FORCE)
 endif()
 
+set(CPACK_WIX_VERSION 4)
 project(transmission)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
@@ -41,8 +42,6 @@ set(MBEDTLS_MINIMUM 1.3)
 set(NPM_MINIMUM 8.1.307) # Node.js 14
 set(PSL_MINIMUM 0.21.1)
 set(QT_MINIMUM 5.6)
-
-set(CPACK_WIX_VERSION 4)
 
 option(ENABLE_DAEMON "Build daemon" ON)
 tr_auto_option(ENABLE_GTK "Build GTK client" AUTO)
