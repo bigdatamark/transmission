@@ -41,6 +41,6 @@ function global:Build-Curl([string] $PrefixDir, [string] $Arch, [string] $DepsPr
     )
 
     Invoke-CMakeBuildAndInstall $SourceDir $BuildDir $ConfigOptions
-    Invoke-NativeCommand cmake -E remove_directory (Join-Path $PrefixDir lib cmake CURL) # until we support it
+    Invoke-NativeCommand cmake -E remove_directory (Join-Path $PrefixDir 'lib\cmake\CURL') # until we support it
     Copy-Item -Path (Join-Path $BuildDir lib libcurl.pdb) -Destination (Join-Path $PrefixDir bin)
 }
