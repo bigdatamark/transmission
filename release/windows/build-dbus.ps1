@@ -23,9 +23,6 @@ function global:Build-DBus([string] $PrefixDir, [string] $Arch, [string] $DepsPr
         '-DDBUS_ENABLE_XML_DOCS=OFF'
     )
 
-    # Patch to remove "-3" (or whatever) revision suffix part from DLL name since Qt doesn't seem to support that and we don't really need it
-    Edit-TextFile ([IO.Path]::Combine($SourceDir), 'cmake', 'modules', 'MacrosAutotools.cmake') '^.*_LIBRARY_REVISION.*' ''
-
     Invoke-CMakeBuildAndInstall $SourceDir $BuildDir $ConfigOptions
     Copy-Item -Path ([IO.Path]::Combine($BuildDir), 'bin', 'dbus-1.pdb') -Destination (Join-Path $PrefixDir bin)
 }
