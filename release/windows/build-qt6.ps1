@@ -64,7 +64,7 @@ function global:Build-Qt6([string] $PrefixDir, [string] $Arch, [string] $DepsPre
         '-L'; (Join-Path $DepsPrefixDir lib).Replace('\', '/')
         '--'
         "-DCMAKE_PREFIX_PATH=${DepsPrefixDir}"
-        '-DCMAKE_TOOLCHAIN_FILE=dummy.cmake'
+        "-DCMAKE_TOOLCHAIN_FILE='C:\Users\mark\dummy.cmake'"
         "-DCMAKE_PROJECT_TOP_LEVEL_INCLUDES='C:\Users\mark\vcpkg\scripts\buildsystems\vcpkg.cmake'"
     )
 
