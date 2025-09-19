@@ -34,7 +34,7 @@ Param(
     [switch] $PackDebugSyms
 )
 
-Set-StrictMode -Version '6.0'
+Set-StrictMode -Version '5.0'
 
 $ErrorActionPreference = 'Stop'
 $PSDefaultParameterValues['*:ErrorAction'] = $ErrorActionPreference
