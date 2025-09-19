@@ -42,6 +42,8 @@ set(NPM_MINIMUM 8.1.307) # Node.js 14
 set(PSL_MINIMUM 0.21.1)
 set(QT_MINIMUM 5.6)
 
+set(CPACK_WIX_VERSION "4.0")
+
 option(ENABLE_DAEMON "Build daemon" ON)
 tr_auto_option(ENABLE_GTK "Build GTK client" AUTO)
 tr_auto_option(ENABLE_QT "Build Qt client" AUTO)
