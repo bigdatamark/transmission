@@ -14,12 +14,12 @@ function global:Build-Qt6([string] $PrefixDir, [string] $Arch, [string] $DepsPre
 
     $ArchiveBase = "qt-everywhere-src-${Qt6Version}"
     $UnpackFlags = @(
-        (Join-Path $ArchiveBase qtactiveqt '*')
-        (Join-Path $ArchiveBase qtbase '*')
-        (Join-Path $ArchiveBase qtsvg '*')
-        (Join-Path $ArchiveBase qttools '*')
-        (Join-Path $ArchiveBase qttranslations '*')
-        (Join-Path $ArchiveBase qtwinextras '*')
+        (Join-Path $ArchiveBase 'qtactiveqt\*')
+        (Join-Path $ArchiveBase 'qtbase\*')
+        (Join-Path $ArchiveBase 'qtsvg\*')
+        (Join-Path $ArchiveBase 'qttools\*')
+        (Join-Path $ArchiveBase 'qttranslations\*')
+        (Join-Path $ArchiveBase 'qtwinextras\*')
         (Join-Path $ArchiveBase .gitmodules)
         (Join-Path $ArchiveBase cmake)
         (Join-Path $ArchiveBase CMakeLists.txt)
@@ -68,17 +68,17 @@ function global:Build-Qt6([string] $PrefixDir, [string] $Arch, [string] $DepsPre
 
     if ($env:LDFLAGS) {
         # Patch to add our linker flags, mainly /PDBALTPATH
-        Edit-TextFile (Join-Path $SourceDir qtbase mkspecs win32-msvc qmake.conf) '(^QMAKE_CXXFLAGS\b.*)' "`$1`nQMAKE_LFLAGS += ${env:LDFLAGS}"
+        Edit-TextFile (Join-Path $SourceDir 'qtbase\mkspecs\win32-msvc\qmake.conf') '(^QMAKE_CXXFLAGS\b.*)' "`$1`nQMAKE_LFLAGS += ${env:LDFLAGS}"
     }
 
     # No need in GUI tools
-    Edit-TextFile (Join-Path $SourceDir qttools src linguist CMakeLists.txt) 'add_subdirectory[(]linguist[)]' ''
+    Edit-TextFile (Join-Path $SourceDir 'qttools\src\linguist\CMakeLists.txt') 'add_subdirectory[(]linguist[)]' ''
 
     Invoke-NativeCommand cmake -E remove_directory $BuildDir
     $env:PATH = @(
         (Join-Path $PrefixDir bin)
         (Join-Path $DepsPrefixDir bin)
-        (Join-Path $BuildDir qtbase lib)
+        (Join-Path $BuildDir 'qtbase\lib')
         $env:PATH
     ) -join [System.IO.Path]::PathSeparator
 
@@ -90,8 +90,8 @@ function global:Build-Qt6([string] $PrefixDir, [string] $Arch, [string] $DepsPre
     Pop-Location
 
     # install target doesn't copy PDBs for release DLLs
-    Get-Childitem -Path (Join-Path $BuildDir qtbase lib) | `
+    Get-Childitem -Path (Join-Path $BuildDir 'qtbase\lib') | `
         ForEach-Object { if ($_ -is [System.IO.DirectoryInfo] -or $_.Name -like '*.pdb') { Copy-Item -Path $_.FullName -Destination (Join-Path $PrefixDir lib) -Filter '*.pdb' -Recurse -Force } }
-    Get-Childitem -Path (Join-Path $BuildDir qtbase plugins) | `
+    Get-Childitem -Path (Join-Path $BuildDir 'qtbase\plugins') | `
         ForEach-Object { if ($_ -is [System.IO.DirectoryInfo] -or $_.Name -like '*.pdb') { Copy-Item -Path $_.FullName -Destination (Join-Path $PrefixDir plugins) -Filter '*.pdb' -Recurse -Force } }
 }
