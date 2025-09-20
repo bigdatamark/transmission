@@ -15,8 +15,8 @@ if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
         FORCE)
 endif()
 
-set(CPACK_WIX_VERSION 4)
-set(CPACK_WIX_EXTENSIONS "WixToolset.UI.wixext")
+# set(CPACK_WIX_VERSION 4)
+# set(CPACK_WIX_EXTENSIONS "WixToolset.UI.wixext")
 project(transmission)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
