@@ -22,10 +22,11 @@ jobs:
           (Join-Path (Join-Path $Env:ProgramFiles 'WiX Toolset v6.0') 'bin') | Out-File $Env:GITHUB_PATH -Append
           Install-Module -Name Pscx -RequiredVersion 4.0.0-beta4 -AllowPrerelease -Force
       - name: Get Source
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: src
           submodules: recursive
+          clean: true
       - name: Get Cache Key
         id: cache-key
         run: |
