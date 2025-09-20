@@ -25,4 +25,5 @@ function global:Build-DBus([string] $PrefixDir, [string] $Arch, [string] $DepsPr
 
     Invoke-CMakeBuildAndInstall $SourceDir $BuildDir $ConfigOptions
     Copy-Item -Path (Join-Path $BuildDir 'bin\dbus-1.pdb') -Destination (Join-Path $PrefixDir bin)
+    Copy-Item -Path (Join-Path $BuildDir 'bin\dbus-1.dll') -Destination (Join-Path $PrefixDir bin)
 }
