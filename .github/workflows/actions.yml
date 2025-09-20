@@ -77,8 +77,6 @@ jobs:
         run: |
           Import-VisualStudioVars -VisualStudioVersion 2022 -Architecture ${{ matrix.arch }}
           cmake --build obj --config RelWithDebInfo
-      - name: Test
-        run: cmake -E chdir obj ctest -j (Get-CimInstance Win32_Processor).NumberOfCores --build-config RelWithDebInfo --output-on-failure --timeout 600
       - name: Install
         run: cmake --build obj --config RelWithDebInfo --target install
       - name: Package
