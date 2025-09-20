@@ -84,7 +84,7 @@ jobs:
       - name: Package
         run: |
           Import-VisualStudioVars -VisualStudioVersion 2022 -Architecture ${{ matrix.arch }}
-          cmake --build obj --config RelWithDebInfo --target pack-msi -D CPACK_SET_DESTDIR=1
+          cmake --build obj --config RelWithDebInfo --target pack-msi
       - uses: actions/upload-artifact@v4
         with:
           name: binaries-${{ github.job }}-${{ matrix.arch }}
