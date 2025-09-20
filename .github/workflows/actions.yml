@@ -19,7 +19,7 @@ jobs:
           $DepsPrefix = (Join-Path (Get-Item .).Root.Name "${{ matrix.arch }}-prefix")
           "DEPS_PREFIX=${DepsPrefix}" | Out-File $Env:GITHUB_ENV -Append
           (Join-Path $DepsPrefix 'bin') | Out-File $Env:GITHUB_PATH -Append
-          (Join-Path (Join-Path $Env:ProgramFiles(x86) 'WiX Toolset v3.14') 'bin') | Out-File $Env:GITHUB_PATH -Append
+          (Join-Path (Join-Path ${Env:ProgramFiles(x86)} 'WiX Toolset v3.14') 'bin') | Out-File $Env:GITHUB_PATH -Append
           Install-Module -Name Pscx -RequiredVersion 4.0.0-beta4 -AllowPrerelease -Force
       - name: Get Source
         uses: actions/checkout@v4
