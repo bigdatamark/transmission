@@ -983,9 +983,7 @@
            </property>
           </widget>
          </item>
-        </layout>
-       </item>
-        <item>
+         <item>
           <widget class="QCheckBox" name="enableStealthCheck">
            <property name="toolTip">
             <string>Stealth mode prevents download advertisements and does not upload.</string>
