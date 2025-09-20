@@ -464,6 +464,7 @@ void PrefsDialog::initNetworkTab()
     linkWidgetToPref(ui_.enablePexCheck, Prefs::PEX_ENABLED);
     linkWidgetToPref(ui_.enableDhtCheck, Prefs::DHT_ENABLED);
     linkWidgetToPref(ui_.enableLpdCheck, Prefs::LPD_ENABLED);
+    linkWidgetToPref(ui_.enableStealthCheck, Prefs::STEALTH_ENABLED);
     linkWidgetToPref(ui_.defaultTrackersPlainTextEdit, Prefs::DEFAULT_TRACKERS);
 
     auto* cr = new ColumnResizer(this);

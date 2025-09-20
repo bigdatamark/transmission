@@ -985,6 +985,18 @@
          </item>
         </layout>
        </item>
+        <item>
+          <widget class="QCheckBox" name="enableStealthCheck">
+           <property name="toolTip">
+            <string>Stealth mode prevents download advertisements and does not upload.</string>
+           </property>
+           <property name="text">
+            <string>Download in stealth mode</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item>
         <spacer name="defaultTrackersSpacer">
          <property name="orientation">

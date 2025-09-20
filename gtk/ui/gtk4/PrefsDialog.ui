@@ -1055,7 +1055,7 @@
                           <object class="GtkCheckButton" id="enable_stealth_check">
                             <property name="label" translatable="1">Download in stealth mode</property>
                             <property name="focusable">1</property>
-                            <property name="tooltip-text" translatable="1">Stealth mode prevents download advertisments and does not uload.</property>
+                            <property name="tooltip-text" translatable="1">Stealth mode prevents download advertisments and does not upload.</property>
                             <property name="valign">center</property>
                             <property name="hexpand">1</property>
                             <property name="use-underline">1</property>
